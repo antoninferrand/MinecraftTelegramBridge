@@ -10,6 +10,11 @@
 7. Check it!
 8. You can use [ServerLocalization](https://www.curseforge.com/minecraft/mc-mods/server-localization) for better support
 
+The bot processes commands and messages only in the chats listed in `chat_ids`. Anyone
+who can send a command in a configured chat can use the bot there. Private messages
+and other chats are ignored unless their own chat ID is configured. The bot does not
+need administrator privileges for this access check.
+
 # Building
 Most modules build from the repository root:
 ```

@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class ChatObject {
     @SerializedName("id")
-    private Long id = 0L;
+    private Long id = null;
     @SerializedName("type")
     private String type = "";
     @SerializedName("title")

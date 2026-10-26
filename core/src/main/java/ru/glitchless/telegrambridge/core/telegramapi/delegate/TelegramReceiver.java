@@ -8,6 +8,7 @@ import ru.glitchless.telegrambridge.core.handlers.IMessageReceiver;
 import ru.glitchless.telegrambridge.core.telegramapi.TelegramContext;
 import ru.glitchless.telegrambridge.core.telegramapi.model.TelegramAnswerObject;
 import ru.glitchless.telegrambridge.core.telegramapi.model.UpdateObject;
+import ru.glitchless.telegrambridge.core.telegramapi.model.MessageObject;
 import ru.glitchless.telegrambridge.core.utils.HttpUtils;
 import ru.glitchless.telegrambridge.core.utils.LoggerUtils;
 
@@ -44,7 +45,7 @@ public class TelegramReceiver {
         }
     }
 
-    private void processUpdate(@Nullable UpdateObject updateObject) {
+    void processUpdate(@Nullable UpdateObject updateObject) {
         if (updateObject == null) {
             return;
         }
@@ -54,10 +55,17 @@ public class TelegramReceiver {
             return;
         }
 
+        MessageObject message = updateObject.getMessage();
+        if (message.getChat() == null || message.getChat().getId() == null
+                || TelegramBridgeConfig.chat_ids == null
+                || !TelegramBridgeConfig.chat_ids.contains(message.getChat().getId().toString())) {
+            return;
+        }
+
         boolean success = false;
         for (IMessageReceiver receivers : receivers) {
             try {
-                success |= receivers.onTelegramObjectMessage(updateObject.getMessage());
+                success |= receivers.onTelegramObjectMessage(message);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -71,4 +79,5 @@ public class TelegramReceiver {
     public void addListener(IMessageReceiver messageReceiver) {
         receivers.add(messageReceiver);
     }
+
 }
