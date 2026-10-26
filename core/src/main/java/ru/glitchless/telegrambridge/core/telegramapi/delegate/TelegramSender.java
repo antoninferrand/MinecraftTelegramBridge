@@ -41,8 +41,7 @@ public class TelegramSender {
                 logger.info("Telegram answer >> " + response);
             }
         } catch (Exception ex) {
-            logger.error(ex);
-            ex.printStackTrace();
+            logger.error("Telegram send failed (" + ex.getClass().getSimpleName() + ")");
         }
     }
 
