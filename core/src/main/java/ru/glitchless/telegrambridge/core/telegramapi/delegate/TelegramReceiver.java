@@ -54,6 +54,11 @@ public class TelegramReceiver {
             return;
         }
 
+        if (updateObject.getMessage().getChat() == null || updateObject.getMessage().getChat().getId() == null ||
+                !TelegramBridgeConfig.chat_ids.contains(String.valueOf(updateObject.getMessage().getChat().getId()))) {
+            return;
+        }
+
         boolean success = false;
         for (IMessageReceiver receivers : receivers) {
             try {

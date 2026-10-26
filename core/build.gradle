@@ -11,8 +11,10 @@ repositories {
 }
 
 dependencies {
-    compile "com.google.code.findbugs:jsr305:+"
+    compile "com.google.code.findbugs:jsr305:3.0.2"
     compile "org.apache.logging.log4j:log4j-api:2.8.1"
     compile "com.google.code.gson:gson:2.8.0"
     compile "org.apache.commons:commons-lang3:3.5"
 }
+
+sourceCompatibility = targetCompatibility = 1.8
