@@ -28,3 +28,18 @@ cd bridge-1.20 && ./gradlew build
 ![](https://habrastorage.org/webt/c8/1i/v-/c81iv-lwbnc-d5ar-mn3xrpl6r8.png)
 ## Minecraft
 ![](https://habrastorage.org/webt/0b/j2/hz/0bj2hz7dy92bb87yivmhpujiate.png)
+
+### GTNH 1.7.10 additions
+
+- `/day` advances world time to the next morning from the configured Telegram chat.
+- With BetterQuesting installed, completed quests are announced with the player's
+  name, quest title and chapter names. Descriptions and IDs are omitted.
+  The existing asynchronous Telegram sender handles delivery; no external service
+  or save-file polling is required. Historical completions and duplicate events
+  are ignored. Delivery is best effort and pending messages do not survive restart.
+
+The quest integration targets BetterQuesting **3.7.15-GTNH**. For building and
+running its five tests, set `GTNH_BQ_API` to the absolute path of the
+[development JAR](https://github.com/GTNewHorizons/BetterQuesting/releases/download/3.7.15-GTNH/BetterQuesting-3.7.15-GTNH-dev.jar),
+then run `./gradlew :bridge-1.7:build` with the existing Java 11 toolchain.
+The development JAR is a compile/test dependency and is not bundled in the mod.

@@ -1,6 +1,7 @@
 package ru.glitchless.telegrambridge;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
@@ -20,7 +21,8 @@ import java.io.File;
         modid = TelegramBridgeMod.MODID,
         name = "Telegram Bridge",
         version = "${version}",
-        acceptableRemoteVersions = "*"
+        acceptableRemoteVersions = "*",
+        dependencies = "after:betterquesting"
 )
 public class TelegramBridgeMod {
     public static final String MODID = "telegrambridge";
@@ -56,6 +58,13 @@ public class TelegramBridgeMod {
         context.addListener(new ToMinecraftResender());
         context.addListener(new PlayerList());
         context.addListener(new StatusCommand());
+        DayCommand dayCommand = new DayCommand();
+        FMLCommonHandler.instance().bus().register(dayCommand);
+        context.addListener(dayCommand);
+        if (Loader.isModLoaded("betterquesting")) {
+            MinecraftForge.EVENT_BUS.register(new QuestCompletionEvents());
+            logger.info("BetterQuesting quest announcements enabled");
+        }
     }
 
     @Mod.EventHandler
