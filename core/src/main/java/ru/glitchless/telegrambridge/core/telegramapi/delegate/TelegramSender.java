@@ -32,6 +32,7 @@ public class TelegramSender {
     private void sendMessageInternal(String chatId, String message) {
         List<AbstractMap.SimpleEntry<String, Object>> params = new ArrayList<>();
         params.add(new AbstractMap.SimpleEntry<>("parse_mode", "Markdown"));
+        params.add(new AbstractMap.SimpleEntry<>("disable_web_page_preview", true));
         params.add(new AbstractMap.SimpleEntry<>("chat_id", chatId));
         params.add(new AbstractMap.SimpleEntry<>("text", message));
 
