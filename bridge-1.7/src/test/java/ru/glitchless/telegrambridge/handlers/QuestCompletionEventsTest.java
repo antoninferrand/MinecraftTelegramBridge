@@ -34,13 +34,21 @@ public class QuestCompletionEventsTest {
     }
 
     @Test public void formatsNamesAndChaptersWithoutDescriptionsOrIds() {
-        String text = QuestCompletionEvents.format("Player_one", "§9E_TOO_MANY_KEYS", Arrays.asList("§6Getting Started", "Tips"));
-        assertEquals("🏆 *Player\\_one* completed *E\\_TOO\\_MANY\\_KEYS*\n📖 Getting Started / Tips", text);
+        String text = QuestCompletionEvents.format("Player_one", "§9E_TOO_MANY_KEYS", Arrays.asList("§6Getting Started", "Tips"), quest);
+        assertEquals("🏆 *Player\\_one* completed [E\\_TOO\\_MANY\\_KEYS](https://gtnhquestsbook.top?id=AAAAAAAAAAAAAAAAAAAAAg==)\n📖 Getting Started / Tips", text);
         assertFalse(text.contains(player.toString()));
     }
 
+    @Test public void linksKnownQuests() {
+        assertEquals("🏆 *wiikip* completed [Ready, Set, Go!](https://gtnhquestsbook.top?id=AAAAAAAAAAAAAAAAAAAADw==)\n📖 Tier 0 - Stone Age",
+                QuestCompletionEvents.format("wiikip", "Ready, Set, Go!", Arrays.asList("Tier 0 - Stone Age"), new UUID(0, 15)));
+        assertEquals("🏆 *Coshyperbolixx* completed [\"Baked\" Potatoes](https://gtnhquestsbook.top?id=AAAAAAAAAAAAAAAAAAABug==)\n📖 And So, It Begins",
+                QuestCompletionEvents.format("Coshyperbolixx", "\"Baked\" Potatoes", Arrays.asList("And So, It Begins"), new UUID(0, 442)));
+        assertTrue(QuestCompletionEvents.format("A", "B", Collections.<String>emptyList(), new UUID(-1, -1)).contains("%2F"));
+    }
+
     @Test public void escapesTelegramMarkdownAndHandlesNoChapter() {
-        assertEquals("🏆 *Alice* completed *A \\*star\\* and \\[link]*",
-                QuestCompletionEvents.format("Alice", "A *star* and [link]", Collections.<String>emptyList()));
+        assertEquals("🏆 *Alice* completed [A \\*star\\* and \\[link]](https://gtnhquestsbook.top?id=AAAAAAAAAAAAAAAAAAAAAg==)",
+                QuestCompletionEvents.format("Alice", "A *star* and [link]", Collections.<String>emptyList(), quest));
     }
 }
