@@ -31,17 +31,6 @@ cd bridge-1.20 && ./gradlew build
 
 ### GTNH 1.7.10 additions
 
-- Telegram emoji in messages and usernames are rendered as readable ASCII names
-  in Minecraft, e.g. `👍` becomes `:thumbs_up:` and `👍🏽` becomes
-  `:thumbs_up_medium_skin_tone:`. The legacy client cannot render modern emoji;
-  this server-side fallback requires no client mod or resource pack. Flags,
-  keycaps, presentation variants and joined sequences are matched as complete
-  emoji. Other text and Minecraft formatting are preserved. This only affects
-  Telegram-to-Minecraft chat; Telegram messages and commands are unchanged.
-  The mod bundles the [Unicode Emoji 17.0 test data](https://www.unicode.org/Public/17.0.0/emoji/emoji-test.txt)
-  and its license under `bridge-1.7/src/main/resources/emoji/`; no runtime download
-  or extra library is needed. Data SHA-256:
-  `1d8a944f88d7952f7ef7c5167fef3c67995bcae24543949710231b03a201acda`.
 - `/day` advances world time to the next morning from the configured Telegram chat.
 - With BetterQuesting installed, completed quests are announced with the player's
   name, quest title and chapter names. Descriptions and IDs are omitted.
@@ -50,7 +39,7 @@ cd bridge-1.20 && ./gradlew build
   are ignored. Delivery is best effort and pending messages do not survive restart.
 
 The quest integration targets BetterQuesting **3.7.15-GTNH**. For building and
-running its tests, set `GTNH_BQ_API` to the absolute path of the
+running its five tests, set `GTNH_BQ_API` to the absolute path of the
 [development JAR](https://github.com/GTNewHorizons/BetterQuesting/releases/download/3.7.15-GTNH/BetterQuesting-3.7.15-GTNH-dev.jar),
 then run `./gradlew :bridge-1.7:build` with the existing Java 11 toolchain.
 The development JAR is a compile/test dependency and is not bundled in the mod.

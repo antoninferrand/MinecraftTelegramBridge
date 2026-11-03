@@ -37,9 +37,7 @@ public class ToMinecraftResender extends BaseMessageReceiver {
             return true; // ignore
         }
 
-        String textMessage = TelegramBridgeConfig.text.chatmessage_to_minecraft
-                .replace("${nickname}", MinecraftEmojiText.convert(userObject.getUsername()))
-                .replace("${message}", MinecraftEmojiText.convert(message));
+        String textMessage = TelegramBridgeConfig.text.chatmessage_to_minecraft.replace("${nickname}", userObject.getUsername()).replace("${message}", message);
 
 
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
