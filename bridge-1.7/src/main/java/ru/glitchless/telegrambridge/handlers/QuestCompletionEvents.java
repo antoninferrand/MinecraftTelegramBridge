@@ -13,8 +13,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import org.apache.logging.log4j.LogManager;
 
-import java.nio.ByteBuffer;
-import java.util.Base64;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -47,7 +45,7 @@ public class QuestCompletionEvents {
                     if (line.containsKey(id)) chapters.add(StatCollector.translateToLocal(line.getUnlocalisedName()));
                 }
                 if (firstCompletion(event.getPlayerID(), id, timestamp)) {
-                    ToTelegramEvent.broadcastToChats(format(player.getGameProfile().getName(), title, chapters, id));
+                    ToTelegramEvent.broadcastToChats(format(player.getGameProfile().getName(), title, chapters, id, event.getPlayerID()));
                 }
             }
         } catch (RuntimeException | LinkageError error) {
@@ -65,10 +63,9 @@ public class QuestCompletionEvents {
                 .replace("_", "\\_").replace("*", "\\*").replace("`", "\\`").replace("[", "\\[");
     }
 
-    static String format(String username, String title, List<String> chapters, UUID id) {
-        byte[] bytes = ByteBuffer.allocate(16).putLong(id.getMostSignificantBits()).putLong(id.getLeastSignificantBits()).array();
-        String questId = Base64.getEncoder().encodeToString(bytes).replace("+", "%2B").replace("/", "%2F");
-        String text = "🏆 *" + escape(username) + "* completed [" + escape(title) + "](https://gtnhquestsbook.top?id=" + questId + ")";
+    static String format(String username, String title, List<String> chapters, UUID id, UUID playerId) {
+        String url = "https://mcmaps.hejmo.in/quests/#subject=player%3A" + playerId + "&quest=" + id;
+        String text = "🏆 *" + escape(username) + "* completed [" + escape(title) + "](" + url + ")";
         if (!chapters.isEmpty()) text += "\n📖 " + escape(String.join(" / ", chapters));
         return text;
     }
