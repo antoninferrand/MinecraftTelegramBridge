@@ -1,6 +1,9 @@
 package ru.glitchless.telegrambridge.handlers;
 
 import betterquesting.api.events.QuestEvent;
+import net.minecraft.event.ClickEvent;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
@@ -10,6 +13,53 @@ import static org.junit.Assert.*;
 public class QuestCompletionEventsTest {
     private final UUID player = new UUID(0, 1);
     private final UUID quest = new UUID(0, 2);
+
+    private IChatComponent serialized(IChatComponent message) {
+        return IChatComponent.Serializer.func_150699_a(IChatComponent.Serializer.func_150696_a(message));
+    }
+
+    @Test public void availableQuestHasCleanTitleAndHiddenCommandAfterSerialization() {
+        IChatComponent message = serialized(QuestCompletionEvents.formatMinecraft("Player_one", "§1You Reap...",
+                Arrays.asList("§6And So, It\nBegins", "Tips"), quest, true));
+        String text = message.getUnformattedText();
+        assertTrue(text.contains("Player_one completed You Reap... (And So, It Begins / Tips)"));
+        assertFalse(text.contains("\n"));
+        assertFalse(text.contains("sharequest"));
+        assertFalse(text.contains("AAAAAAAA"));
+        IChatComponent link = (IChatComponent) message.getSiblings().get(0);
+        assertEquals("You Reap...", link.getUnformattedText());
+        assertEquals(ClickEvent.Action.RUN_COMMAND, link.getChatStyle().getChatClickEvent().getAction());
+        assertEquals("/bq_client show AAAAAAAAAAAAAAAAAAAAAg==", link.getChatStyle().getChatClickEvent().getValue());
+        assertTrue(link.getChatStyle().getChatHoverEvent().getValue().getUnformattedText().contains("Escape"));
+        IChatComponent chapter = (IChatComponent) message.getSiblings().get(1);
+        assertNull(chapter.getChatStyle().getChatClickEvent());
+    }
+
+    @Test public void unavailableReaderGetsTheTitleWithoutMisleadingClickAction() {
+        IChatComponent message = serialized(QuestCompletionEvents.formatMinecraft("Alice", "First quest",
+                Collections.<String>emptyList(), quest, false));
+        IChatComponent link = (IChatComponent) message.getSiblings().get(0);
+        assertEquals("First quest", link.getUnformattedText());
+        assertNull(link.getChatStyle().getChatClickEvent());
+        assertEquals(EnumChatFormatting.GRAY, link.getChatStyle().getColor());
+        assertTrue(link.getChatStyle().getChatHoverEvent().getValue().getUnformattedText().contains("not yet visible"));
+    }
+
+    @Test public void differentMessagesKeepIndependentQuestCommandsAndReaderStyles() {
+        UUID secondQuest = new UUID(-1, -1);
+        IChatComponent first = serialized(QuestCompletionEvents.formatMinecraft("Alice", "First quest",
+                Collections.<String>emptyList(), quest, true));
+        IChatComponent second = serialized(QuestCompletionEvents.formatMinecraft("Bob", "Second quest",
+                Collections.<String>emptyList(), secondQuest, true));
+        IChatComponent unavailable = serialized(QuestCompletionEvents.formatMinecraft("Bob", "Second quest",
+                Collections.<String>emptyList(), secondQuest, false));
+        IChatComponent firstLink = (IChatComponent) first.getSiblings().get(0);
+        IChatComponent secondLink = (IChatComponent) second.getSiblings().get(0);
+        assertEquals("/bq_client show AAAAAAAAAAAAAAAAAAAAAg==", firstLink.getChatStyle().getChatClickEvent().getValue());
+        assertEquals("/bq_client show _____________________w==", secondLink.getChatStyle().getChatClickEvent().getValue());
+        assertNull(((IChatComponent) unavailable.getSiblings().get(0)).getChatStyle().getChatClickEvent());
+        assertFalse(second.getUnformattedText().contains("_____________________w=="));
+    }
 
     @Test public void ignoresHistoricalAndDuplicateCompletions() {
         QuestCompletionEvents listener = new QuestCompletionEvents(1000);
